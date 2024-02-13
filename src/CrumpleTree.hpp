@@ -18,6 +18,20 @@ class CrumpleTree {
    private:
     // fill in private member data here
     // If you need to declare private functions, do so here too.
+        struct Node
+        {
+            Node(K key, V val)
+            : key{key}, value{val}, left{nullptr}, right{nullptr}
+            {
+            }
+            Node key;
+            Node value;
+            Node *left;
+            Node *right;
+        };
+        Node *root;
+        size_t treeSize{0};
+        size_t maxLevel{0};
 
    public:
     CrumpleTree();
@@ -80,8 +94,9 @@ class CrumpleTree {
 };
 
 template <typename K, typename V>
-CrumpleTree<K, V>::CrumpleTree() {
-    // TODO: Implement this
+CrumpleTree<K, V>::CrumpleTree() 
+    : root{nullptr}
+{
 }
 
 template <typename K, typename V>
@@ -91,14 +106,13 @@ CrumpleTree<K, V>::~CrumpleTree() {
 
 template <typename K, typename V>
 size_t CrumpleTree<K, V>::size() const noexcept {
-    // TODO: Implement this
-    return {};
+    return treeSize;
 }
 
 template <typename K, typename V>
 bool CrumpleTree<K, V>::empty() const noexcept {
     // TODO: Implement this
-    return {};
+    return treeSize == 0;
 }
 
 template <typename K, typename V>

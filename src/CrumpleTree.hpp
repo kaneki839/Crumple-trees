@@ -18,20 +18,21 @@ class CrumpleTree {
    private:
     // fill in private member data here
     // If you need to declare private functions, do so here too.
-        struct Node
-        {
-            Node(K key, V val)
+    struct Node
+    {
+        Node(K key, V val)
             : key{key}, value{val}, left{nullptr}, right{nullptr}
-            {
-            }
-            Node key;
-            Node value;
-            Node *left;
-            Node *right;
-        };
-        Node *root;
-        size_t treeSize{0};
-        size_t maxLevel{0};
+        {
+        }
+        K key;
+        V value;
+        Node *left;
+        Node *right;
+    };
+
+    Node *root;
+    size_t treeSize{0};
+    size_t maxLevel{0};
 
    public:
     CrumpleTree();
@@ -117,8 +118,22 @@ bool CrumpleTree<K, V>::empty() const noexcept {
 
 template <typename K, typename V>
 bool CrumpleTree<K, V>::contains(const K &key) const noexcept {
-    // TODO: Implement this
-    return {};
+    Node *current{root};
+    while (current != nullptr) {
+        if (key == current->key)
+        {
+            return true;
+        }
+        else if (key < current->key)
+        {
+            current = current->left;
+        }
+        else 
+        {
+            current = current->right;
+        }
+    }
+    return false;
 }
 
 template <typename K, typename V>
@@ -143,7 +158,13 @@ const V &CrumpleTree<K, V>::find(const K &key) const {
 
 template <typename K, typename V>
 void CrumpleTree<K, V>::insert(const K &key, const V &value) {
-    // TODO: Implement this
+    Node *newNode = new Node(key, value);
+
+    if (root == nullptr)
+    {
+        root = newNode;
+    }
+    treeSize++;
 }
 
 template <typename K, typename V>

@@ -21,13 +21,14 @@ class CrumpleTree {
     struct Node
     {
         Node(K key, V val)
-            : key{key}, value{val}, left{nullptr}, right{nullptr}
+            : key{key}, value{val}, left{nullptr}, right{nullptr}, level{0}
         {
         }
         K key;
         V value;
         Node *left;
         Node *right;
+        size_t level;
     };
 
     Node *root;

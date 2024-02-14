@@ -93,6 +93,7 @@ class CrumpleTree {
     // Each returns them in a different order.
     void recursiveInOrder(Node *current, std::vector<K> &allKeys) const;
     void recursivePreOrder(Node *current, std::vector<K> &allKeys) const;
+    void recursivePostOrder(Node *current, std::vector<K> &allKeys) const;
     [[nodiscard]] std::vector<K> inOrder() const;
     [[nodiscard]] std::vector<K> preOrder() const;
     [[nodiscard]] std::vector<K> postOrder() const;
@@ -262,6 +263,17 @@ void CrumpleTree<K, V>::recursivePreOrder(Node *current, std::vector<K> &allKeys
 }
 
 template <typename K, typename V>
+void CrumpleTree<K, V>::recursivePostOrder(Node *current, std::vector<K> &allKeys) const {
+    if (current == nullptr)
+    {
+        return;
+    }
+    recursiveInOrder(current->left, allKeys);
+    recursiveInOrder(current->right, allKeys);
+    allKeys.push_back(current->key);
+}
+
+template <typename K, typename V>
 std::vector<K> CrumpleTree<K, V>::inOrder() const {
     std::vector<K> allKeys;
     Node *current{root};
@@ -279,8 +291,10 @@ std::vector<K> CrumpleTree<K, V>::preOrder() const {
 
 template <typename K, typename V>
 std::vector<K> CrumpleTree<K, V>::postOrder() const {
-    // TODO: Implement this
-    return {};
+    std::vector<K> allKeys;
+    Node *current{root};
+    recursivePostOrder(current, allKeys);
+    return allKeys;
 }
 
 }  // namespace shindler::ics46::project4

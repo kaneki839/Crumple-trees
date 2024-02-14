@@ -89,4 +89,16 @@ TEST_CASE("Tree:RemoveDoesARemove:ExpectElementsNotInTreeAndLevelsCorrect",
 }
 // NOLINTEND
 
+// Extra Tests
+TEST_CASE("Tree:SimpleFind:ExpectSingleInsertFoundAndConstVersion",
+          "[Required][Basic][Find][Const]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.insert(5, "foo");
+
+    REQUIRE(tree.find(5) == "foo");
+
+    const proj4::CrumpleTree<int, std::string> &treeRef= tree;
+    REQUIRE(treeRef.find(5) == "foo");
+}
+
 }  // namespace

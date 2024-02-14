@@ -21,13 +21,14 @@ class CrumpleTree {
     struct Node
     {
         Node(K key, V val)
-            : key{key}, value{val}, left{nullptr}, right{nullptr}, level{0}
+            : key{key}, value{val}, left{nullptr}, right{nullptr}, parent{nullptr}, level{0}
         {
         }
         K key;
         V value;
         Node *left;
         Node *right;
+        Node *parent;
         size_t level;
     };
 
@@ -191,7 +192,44 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     {
         root = newNode;
         topLevel++;
+        treeSize++;
+        return;
     }
+
+    Node *current{root};
+
+    // Search phase
+    while (current != nullptr)
+    {
+        if (key < current->key)
+        {
+            if (current->left == nullptr)
+            {
+                current->left = newNode;
+                newNode->parent = current;
+                current = nullptr;
+            }
+            else 
+            {
+                current = current->left;
+            }
+        }
+        else 
+        {
+            if (current->right == nullptr) 
+            {
+                current->right = newNode;
+                newNode->parent = current;
+                current = nullptr;
+            }
+            else 
+            {
+                current = current->right;
+            }
+        }
+    }
+
+    // insert at level 0
     treeSize++;
 }
 

@@ -106,9 +106,20 @@ TEST_CASE("Tree:SimpleInOrder",
           "[Required][Basic][InOrder]") {
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(5, "foo");
+    tree.insert(3, "fizz");
     tree.insert(10, "bar");
-    std::vector<int> expect =  {5, 10};
+    std::vector<int> expect =  {3, 5, 10};
     REQUIRE(tree.inOrder() == expect);
+}
+
+TEST_CASE("Tree:SimplePreOrder",
+          "[Required][Basic][PreOrder]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.insert(5, "foo");
+    tree.insert(3, "fizz");
+    tree.insert(10, "bar");
+    std::vector<int> expect =  {5, 3, 10};
+    REQUIRE(tree.preOrder() == expect);
 }
 
 }  // namespace

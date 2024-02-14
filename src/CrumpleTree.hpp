@@ -91,6 +91,7 @@ class CrumpleTree {
     // The following three functions all return
     // the set of keys in the tree as a standard vector.
     // Each returns them in a different order.
+    void recursiveInOrder(Node *current, std::vector<K> &allKeys) const;
     [[nodiscard]] std::vector<K> inOrder() const;
     [[nodiscard]] std::vector<K> preOrder() const;
     [[nodiscard]] std::vector<K> postOrder() const;
@@ -237,11 +238,23 @@ template <typename K, typename V>
 void CrumpleTree<K, V>::remove(const K &key) {
     // TODO: Implement this
 }
+template <typename K, typename V>
+void CrumpleTree<K, V>::recursiveInOrder(Node *current, std::vector<K> &allKeys) const {
+    if (current == nullptr)
+    {
+        return;
+    }
+    recursiveInOrder(current->left, allKeys);
+    allKeys.push_back(current->key);
+    recursiveInOrder(current->right, allKeys);
+}
 
 template <typename K, typename V>
 std::vector<K> CrumpleTree<K, V>::inOrder() const {
-    // TODO: Implement this
-    return {};
+    std::vector<K> allKeys;
+    Node *current{root};
+    recursiveInOrder(current, allKeys);
+    return allKeys;
 }
 
 template <typename K, typename V>

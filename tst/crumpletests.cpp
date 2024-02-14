@@ -1,5 +1,6 @@
 #include <CrumpleTree.hpp>
 #include <catch2/catch_amalgamated.hpp>
+#include <vector>
 
 namespace {
 namespace proj4 = shindler::ics46::project4;
@@ -99,6 +100,15 @@ TEST_CASE("Tree:SimpleFind:ExpectSingleInsertFoundAndConstVersion",
 
     const proj4::CrumpleTree<int, std::string> &treeRef= tree;
     REQUIRE(treeRef.find(5) == "foo");
+}
+
+TEST_CASE("Tree:SimpleInOrder",
+          "[Required][Basic][InOrder]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.insert(5, "foo");
+    tree.insert(10, "bar");
+    std::vector<int> expect =  {5, 10};
+    REQUIRE(tree.inOrder() == expect);
 }
 
 }  // namespace

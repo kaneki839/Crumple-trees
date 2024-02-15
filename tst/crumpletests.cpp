@@ -90,9 +90,9 @@ TEST_CASE("Tree:RemoveDoesARemove:ExpectElementsNotInTreeAndLevelsCorrect",
 }
 // NOLINTEND
 
-// Extra Tests
+// <--------------------Extra Tests-------------------->
 TEST_CASE("Tree:SimpleFind:ExpectSingleInsertFoundAndConstVersion",
-          "[Required][Basic][Find][Const]") {
+          "[Extra][Basic][Find][Const]") {
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(5, "foo");
 
@@ -103,7 +103,7 @@ TEST_CASE("Tree:SimpleFind:ExpectSingleInsertFoundAndConstVersion",
 }
 
 TEST_CASE("Tree:SimpleInOrder",
-          "[Required][Basic][InOrder]") {
+          "[Extra][Basic][InOrder]") {
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(5, "foo");
     tree.insert(3, "fizz");
@@ -113,7 +113,7 @@ TEST_CASE("Tree:SimpleInOrder",
 }
 
 TEST_CASE("Tree:SimplePreOrder",
-          "[Required][Basic][PreOrder]") {
+          "[Extra][Basic][PreOrder]") {
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(5, "foo");
     tree.insert(3, "fizz");
@@ -122,4 +122,28 @@ TEST_CASE("Tree:SimplePreOrder",
     REQUIRE(tree.preOrder() == expect);
 }
 
-}  // namespace
+TEST_CASE("Tree:WholeInsertionLogic",
+          "[Extra][Insert][Contains][Level]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    // insert 20
+    tree.insert(20, "are");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.contains(20));
+
+    // insert 19
+    tree.insert(19, "you");
+    REQUIRE(tree.level(20) == 2);
+    REQUIRE(tree.level(19) == 1);
+    REQUIRE(tree.contains(19));
+
+    // insert 18
+    tree.insert(18, "following");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(18) == 1);
+    REQUIRE(tree.contains(18));
+
+    // insert 12
+}
+
+} // namespace

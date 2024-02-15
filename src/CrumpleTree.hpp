@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
 namespace shindler::ics46::project4 {
 
 class ElementNotFoundException : public std::runtime_error {
@@ -34,7 +35,6 @@ class CrumpleTree {
 
     Node *root;
     size_t treeSize{0};
-    size_t topLevel{0};
 
    public:
     CrumpleTree();
@@ -209,14 +209,13 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     {
         newNode->level = 1;
         root = newNode;
-        topLevel++;
         treeSize++;
         return;
     }
 
     Node *current{root};
 
-    // Search phase (basic BST) -> need to implemented crumple tree
+    // Search phase and insert at level 0 (basic BST)
     while (current != nullptr)
     {
         if (key < current->key)
@@ -225,12 +224,9 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
             {
                 current->left = newNode;
                 newNode->parent = current;
-                current = nullptr;
+                break;                
             }
-            else 
-            {
-                current = current->left;
-            }
+            current = current->left;
         }
         else 
         {
@@ -238,16 +234,45 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
             {
                 current->right = newNode;
                 newNode->parent = current;
-                current = nullptr;
+                break;
+            }
+            current = current->right;
+        }
+    }
+    
+    // Rebalancing
+    Node *parent{current};  // current is the parent of newly inserted node @ level 1
+    Node *child{newNode};
+    // std::cout << parent->key <<  ":" + parent->value << std::endl;
+    // std::cout << child->key << ":" + child->value << std::endl;
+    unsigned leftChildLevel = (parent->left == nullptr) ? 0 : parent->left->level;
+    unsigned rightChildLevel = (parent->right == nullptr) ? 0 : parent->right->level;
+    bool isBalance = (parent->level - leftChildLevel == 1 || parent->level - leftChildLevel == 2) 
+                    && (parent->level - rightChildLevel == 1 || parent->level - rightChildLevel == 2);
+
+    while ((child->level == 0 || !isBalance) && parent != nullptr)
+    {
+        // std::cout << parent->key <<  ":" + parent->value << std::endl;
+        // std::cout << child->key << ":" + child->value << std::endl;
+        // std::cout << "leftChildLevel: " + std::to_string(leftChildLevel) << std::endl;
+
+        child->level++;
+        if (child->level == parent->level)
+        {
+            if (parent->level - leftChildLevel == 2 || parent->level - rightChildLevel == 2)
+            {
+                parent->level--;
+                parent->left = child->right;
+                child->right = parent;
             }
             else 
             {
-                current = current->right;
+                parent->level++;
             }
         }
+        child = parent;
+        parent = parent->parent; // next parent of cur's parent
     }
-
-    // insert at level 0
     treeSize++;
 }
 
@@ -273,8 +298,8 @@ void CrumpleTree<K, V>::recursivePreOrder(Node *current, std::vector<K> &allKeys
         return;
     }
     allKeys.push_back(current->key);
-    recursiveInOrder(current->left, allKeys);
-    recursiveInOrder(current->right, allKeys);
+    recursivePreOrder(current->left, allKeys);
+    recursivePreOrder(current->right, allKeys);
 }
 
 template <typename K, typename V>
@@ -283,8 +308,8 @@ void CrumpleTree<K, V>::recursivePostOrder(Node *current, std::vector<K> &allKey
     {
         return;
     }
-    recursiveInOrder(current->left, allKeys);
-    recursiveInOrder(current->right, allKeys);
+    recursivePostOrder(current->left, allKeys);
+    recursivePostOrder(current->right, allKeys);
     allKeys.push_back(current->key);
 }
 

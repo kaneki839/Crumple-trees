@@ -207,7 +207,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 
     if (root == nullptr)
     {
-        newNode->level = 1;
+        newNode->level++;
         root = newNode;
         treeSize++;
         return;
@@ -243,33 +243,35 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     // Rebalancing
     Node *parent{current};  // current is the parent of newly inserted node @ level 1
     Node *child{newNode};
-    // std::cout << parent->key <<  ":" + parent->value << std::endl;
-    // std::cout << child->key << ":" + child->value << std::endl;
-    unsigned leftChildLevel = (parent->left == nullptr) ? 0 : parent->left->level;
-    unsigned rightChildLevel = (parent->right == nullptr) ? 0 : parent->right->level;
-    bool isBalance = (parent->level - leftChildLevel == 1 || parent->level - leftChildLevel == 2) 
-                    && (parent->level - rightChildLevel == 1 || parent->level - rightChildLevel == 2);
-
-    while ((child->level == 0 || !isBalance) && parent != nullptr)
+    if (child->level == 0)
     {
-        // std::cout << parent->key <<  ":" + parent->value << std::endl;
-        // std::cout << child->key << ":" + child->value << std::endl;
-        // std::cout << "leftChildLevel: " + std::to_string(leftChildLevel) << std::endl;
-
         child->level++;
+    }
+    
+    while (parent != nullptr)
+    {
+        unsigned leftChildLevel = (parent->left == nullptr) ? 0 : parent->left->level;
+        unsigned rightChildLevel = (parent->right == nullptr) ? 0 : parent->right->level;
+        bool canMoveUpParent = (parent->level - leftChildLevel != 2) && (parent->level - rightChildLevel != 2);
+
         if (child->level == parent->level)
         {
-            if (parent->level - leftChildLevel == 2 || parent->level - rightChildLevel == 2)
+            if (!canMoveUpParent)
             {
                 parent->level--;
                 parent->left = child->right;
                 child->right = parent;
+                if (parent == root) 
+                {
+                    root = child;
+                }
             }
             else 
             {
                 parent->level++;
             }
         }
+
         child = parent;
         parent = parent->parent; // next parent of cur's parent
     }

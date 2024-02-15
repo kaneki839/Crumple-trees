@@ -144,6 +144,12 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.contains(18));
 
     // insert 12
+    tree.insert(12, "from");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(19) == 3);
+    REQUIRE(tree.level(18) == 2);
+    REQUIRE(tree.level(12) == 1);
+    REQUIRE(tree.contains(12));
 }
 
 } // namespace

@@ -29,7 +29,7 @@ class CrumpleTree {
         Node *left;
         Node *right;
         Node *parent;
-        size_t level;
+        unsigned level;
     };
 
     Node *root;
@@ -143,8 +143,22 @@ bool CrumpleTree<K, V>::contains(const K &key) const noexcept {
 
 template <typename K, typename V>
 unsigned CrumpleTree<K, V>::level(const K &key) const {
-    // TODO: Implement this
-    return {};
+    Node *current{root};
+    while (current != nullptr) {
+        if (key == current->key)
+        {
+            return current->level;
+        }
+        else if (key < current->key)
+        {
+            current = current->left;
+        }
+        else 
+        {
+            current = current->right;
+        }
+    }
+    throw ElementNotFoundException("key is not in the tree");
 }
 
 template <typename K, typename V>
@@ -193,6 +207,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 
     if (root == nullptr)
     {
+        newNode->level = 1;
         root = newNode;
         topLevel++;
         treeSize++;
@@ -201,7 +216,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 
     Node *current{root};
 
-    // Search phase
+    // Search phase (basic BST) -> need to implemented crumple tree
     while (current != nullptr)
     {
         if (key < current->key)

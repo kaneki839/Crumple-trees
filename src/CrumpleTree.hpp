@@ -259,11 +259,33 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
             if (!canMoveUpParent)
             {
                 parent->level--;
-                parent->left = child->right;
-                child->right = parent;
-                if (parent == root) 
+
+                if (parent->left == child)    // at left 
                 {
-                    root = child;
+                    parent->left = child->right;
+                    child->right = parent;
+                    
+                    if (parent == root) 
+                    {
+                        root = child;
+                    }
+                    else 
+                    {
+                        parent->parent->left = child;
+                    }
+                }
+                else    // at right
+                {
+                    parent->right = child->left;
+                    child->left = parent;
+                    if (parent == root) 
+                    {
+                        root = child;
+                    }
+                    else 
+                    {
+                        parent->parent->right = child;
+                    }
                 }
             }
             else 

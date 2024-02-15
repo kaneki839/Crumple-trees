@@ -150,6 +150,26 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.level(18) == 2);
     REQUIRE(tree.level(12) == 1);
     REQUIRE(tree.contains(12));
+
+    // insert 9
+    tree.insert(9, "lecture?");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(19) == 3);
+    REQUIRE(tree.level(18) == 1);
+    REQUIRE(tree.level(12) == 2);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.contains(9));
+
+    // insert 17 (rearrange)
+    tree.insert(17, "heyoo");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(17) == 1);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.level(12) == 2);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(18) == 3);
+    REQUIRE(tree.contains(17));
+
 }
 
 } // namespace

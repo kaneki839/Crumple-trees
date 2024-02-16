@@ -192,7 +192,55 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.level(12) == 3);
     REQUIRE(tree.level(18) == 4);
     REQUIRE(tree.contains(5));
-    
+
+    // insert 13, 15
+    tree.insert(13, "uhhhhh");
+    REQUIRE(tree.contains(13));
+    tree.insert(15, "noooo");
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(17) == 1);
+    REQUIRE(tree.level(13) == 1);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.level(5) == 1);
+    REQUIRE(tree.level(7) == 2);
+    REQUIRE(tree.level(15) == 2);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(12) == 3);
+    REQUIRE(tree.level(18) == 4);
+    REQUIRE(tree.contains(15));
+
+    // insert 6
+    tree.insert(6, "internnnn");
+    REQUIRE(tree.level(6) == 1);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.level(13) == 1);
+    REQUIRE(tree.level(17) == 1);
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(5) == 2);
+    REQUIRE(tree.level(15) == 2);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(7) == 3);
+    REQUIRE(tree.level(18) == 3);
+    REQUIRE(tree.level(12) == 4);
+    REQUIRE(tree.contains(6));
+
+    // insert 16
+    tree.insert(16, "gimmeeee");
+    REQUIRE(tree.level(6) == 1);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.level(13) == 1);
+    REQUIRE(tree.level(16) == 1);
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(5) == 2);
+    REQUIRE(tree.level(17) == 2);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(7) == 3);
+    REQUIRE(tree.level(15) == 3);
+    REQUIRE(tree.level(18) == 4);
+    REQUIRE(tree.level(12) == 5);
+    REQUIRE(tree.contains(16));
+
+    //
 }
 
 } // namespace

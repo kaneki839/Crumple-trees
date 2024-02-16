@@ -196,7 +196,7 @@ TEST_CASE("Tree:WholeInsertionLogic",
     // insert 13, 15
     tree.insert(13, "uhhhhh");
     REQUIRE(tree.contains(13));
-    tree.insert(15, "noooo");
+    tree.insert(15, "commmonnnnn");
     REQUIRE(tree.level(20) == 1);
     REQUIRE(tree.level(17) == 1);
     REQUIRE(tree.level(13) == 1);
@@ -210,7 +210,7 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.contains(15));
 
     // insert 6
-    tree.insert(6, "internnnn");
+    tree.insert(6, "gimmeeee");
     REQUIRE(tree.level(6) == 1);
     REQUIRE(tree.level(9) == 1);
     REQUIRE(tree.level(13) == 1);
@@ -225,7 +225,7 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.contains(6));
 
     // insert 16
-    tree.insert(16, "gimmeeee");
+    tree.insert(16, "internnnn");
     REQUIRE(tree.level(6) == 1);
     REQUIRE(tree.level(9) == 1);
     REQUIRE(tree.level(13) == 1);
@@ -240,7 +240,64 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.level(12) == 5);
     REQUIRE(tree.contains(16));
 
-    //
+    // insert 14
+    tree.insert(14, "offeeeerrrrr");
+    REQUIRE(tree.level(6) == 1);
+    REQUIRE(tree.level(9) == 1);
+    REQUIRE(tree.level(14) == 1);
+    REQUIRE(tree.level(16) == 1);
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(5) == 2);
+    REQUIRE(tree.level(13) == 2);
+    REQUIRE(tree.level(17) == 2);
+    REQUIRE(tree.level(19) == 2);
+    REQUIRE(tree.level(7) == 3);
+    REQUIRE(tree.level(15) == 3);
+    REQUIRE(tree.level(18) == 4);
+    REQUIRE(tree.level(12) == 5);
+    REQUIRE(tree.contains(14));
 }
 
+TEST_CASE("Tree:OtherInsertion",
+          "[Extra][Insert][Contains][Level]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.insert(22, "day1");
+    tree.insert(23, "day2");
+    tree.insert(24, "day3");
+    tree.insert(25, "day4");
+    tree.insert(26, "day5");
+    tree.insert(27, "day6");
+    tree.insert(28, "day7");
+    REQUIRE(tree.level(22) == 1);
+    REQUIRE(tree.level(24) == 1);
+    REQUIRE(tree.level(26) == 1);
+    REQUIRE(tree.level(28) == 1);
+    REQUIRE(tree.level(23) == 2);
+    REQUIRE(tree.level(27) == 2);
+    REQUIRE(tree.level(25) == 3);
+
+    proj4::CrumpleTree<int, std::string> tree2;
+    tree2.insert(20, "c");
+    tree2.insert(21, "r");
+    tree2.insert(22, "u");
+    tree2.insert(28, "m");
+    tree2.insert(31, "p");
+    tree2.insert(23, "le?");
+    REQUIRE(tree2.level(20) == 1);
+    REQUIRE(tree2.level(23) == 1);
+    REQUIRE(tree2.level(31) == 1);
+    REQUIRE(tree2.level(21) == 2);
+    REQUIRE(tree2.level(28) == 2);
+    REQUIRE(tree2.level(22) == 3);
+
+    tree2.insert(32, "huhh");
+    REQUIRE(tree2.level(20) == 1);
+    REQUIRE(tree2.level(23) == 1);
+    REQUIRE(tree2.level(32) == 1);
+    REQUIRE(tree2.level(21) == 2);
+    REQUIRE(tree2.level(31) == 2);
+    REQUIRE(tree2.level(28) == 3);
+    REQUIRE(tree2.level(22) == 4);
+
+}
 } // namespace

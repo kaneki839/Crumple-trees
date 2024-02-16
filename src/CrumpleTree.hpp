@@ -80,6 +80,7 @@ class CrumpleTree {
     // If the key already exists in the tree,
     // you may do as you please (no test cases in
     // the grading script will deal with this situation)
+    void reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange);
     void insert(const K &key, const V &value);
 
     // Deletes the given key from the tree
@@ -202,6 +203,84 @@ const V &CrumpleTree<K, V>::find(const K &key) const {
 }
 
 template <typename K, typename V>
+void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange) {
+    // left rising
+    if (leftNeedReArrange)
+    {
+        /* note cases:
+            prevChild -> 18
+            child -> 12
+            parent -> 19
+        */ 
+        /* note cases:
+            prevChild -> 15
+            child -> 13
+            parent -> 17
+        */ 
+        child->right = prevChild->left;
+        if (prevChild->left != nullptr) // for left subtree
+        {
+            prevChild->left->parent = child;  // change the parent for the LC of prev child node
+        }
+        if (parent->parent != nullptr) // for right subtree
+        {
+            parent->parent->right = prevChild;
+        }
+        prevChild->left = child;
+
+        parent->left = prevChild->right; 
+        prevChild->right = parent;
+        
+        prevChild->level++;
+        parent->level--;
+        child->level--;
+        
+        prevChild->parent = parent->parent;
+        child->parent = prevChild;
+        parent->parent = prevChild;
+        if (parent == root)
+        {
+            root = prevChild;
+        }
+    }
+    // right rising
+    else if (rightNeedReArrange)
+    {
+        /* note cases:
+            prevChild -> 22
+            child -> 28
+            parent -> 21
+        */ 
+
+        child->left = prevChild->right;
+        if (prevChild->right != nullptr) // for right subtree
+        {
+            prevChild->right->parent = child;  // change the parent for the LC of prev child node
+        }
+        // if (parent->parent != nullptr) 
+        // {
+        //     parent->parent->right = prevChild;
+        // }
+        prevChild->right = child;
+
+        parent->right = prevChild->left; 
+        prevChild->left = parent;
+        
+        prevChild->level++;
+        parent->level--;
+        child->level--;
+        
+        prevChild->parent = parent->parent;
+        child->parent = prevChild;
+        parent->parent = prevChild;
+        if (parent == root)
+        {
+            root = prevChild;
+        }
+    }
+}
+
+template <typename K, typename V>
 void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     Node *newNode = new Node(key, value);
 
@@ -258,50 +337,17 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
         bool canMoveUpParent = (parent->level - p_leftChildLevel != 2) && (parent->level - p_rightChildLevel != 2);
         int childLeftShape = child->level - (child->left == nullptr ? 0 : child->left->level);
         int childRightShape = child->level - (child->right == nullptr ? 0 : child->right->level);
-        bool needReArrange = (childLeftShape == 2 && childRightShape == 1);
+        bool leftNeedReArrange = (childLeftShape == 2 && childRightShape == 1 && child->right != nullptr);
+        bool rightNeedReArrange = (childLeftShape == 1 && childRightShape == 2 && child->left != nullptr);
 
         if (child->level == parent->level)
         {
             if (!canMoveUpParent)
             {
-                // case 4
-                if (needReArrange)
+                // case 5
+                if ((parent->left == child && leftNeedReArrange) || (parent->right == child && rightNeedReArrange))
                 {
-                    /* note cases:
-                        prevChild -> 18
-                        child -> 12
-                        parent -> 19
-                    */ 
-                    /* note cases:
-                        prevChild -> 15
-                        child -> 13
-                        parent -> 17
-                    */ 
-                    child->right = prevChild->left;
-                    if (prevChild->left != nullptr) // for left subtree
-                    {
-                        prevChild->left->parent = child;  // change the parent for the LC of prev child node
-                    }
-                    if (parent->parent != nullptr) // for right subtree
-                    {
-                        parent->parent->right = prevChild;
-                    }
-                    prevChild->left = child;
-
-                    parent->left = prevChild->right; 
-                    prevChild->right = parent;
-                    
-                    prevChild->level++;
-                    parent->level--;
-                    child->level--;
-                    
-                    prevChild->parent = parent->parent;
-                    child->parent = prevChild;
-                    parent->parent = prevChild;
-                    if (parent == root)
-                    {
-                        root = prevChild;
-                    }
+                    reArrange(parent, child, prevChild, leftNeedReArrange, rightNeedReArrange);
                 }
                 else 
                 {

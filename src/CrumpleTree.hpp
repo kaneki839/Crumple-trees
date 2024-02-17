@@ -80,6 +80,7 @@ class CrumpleTree {
     // If the key already exists in the tree,
     // you may do as you please (no test cases in
     // the grading script will deal with this situation)
+    void calculateShape(Node *node, int &leftShape, int &rightShape);
     void reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange);
     void insert(const K &key, const V &value);
 
@@ -201,6 +202,14 @@ const V &CrumpleTree<K, V>::find(const K &key) const {
     }
     throw ElementNotFoundException("key is not in the tree");
 }
+template <typename K, typename V>
+void CrumpleTree<K, V>::calculateShape(Node *node, int &leftShape, int &rightShape)
+{
+    int leftChildLevel = (node->left == nullptr) ? 0 : node->left->level;
+    int rightChildLevel = (node->right == nullptr) ? 0 : node->right->level;
+    leftShape = node->level - leftChildLevel;
+    rightShape = node->level - rightChildLevel;
+}
 
 template <typename K, typename V>
 void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange) {
@@ -319,11 +328,14 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     Node *prevChild{};
     while (parent != nullptr)
     {
-        int p_leftChildLevel = (parent->left == nullptr) ? 0 : parent->left->level;
-        int p_rightChildLevel = (parent->right == nullptr) ? 0 : parent->right->level;
-        bool canMoveUpParent = (parent->level - p_leftChildLevel != 2) && (parent->level - p_rightChildLevel != 2);
-        int childLeftShape = child->level - (child->left == nullptr ? 0 : child->left->level);
-        int childRightShape = child->level - (child->right == nullptr ? 0 : child->right->level);
+        int parentLeftShape = 0;
+        int parentRightShape = 0;
+        calculateShape(parent, parentLeftShape, parentRightShape);
+        bool canMoveUpParent = (parentLeftShape != 2) && (parentRightShape != 2);
+       
+        int childLeftShape = 0;
+        int childRightShape = 0;
+        calculateShape(child, childLeftShape, childRightShape);
         bool leftNeedReArrange = (childLeftShape == 2 && childRightShape == 1 && child->right != nullptr);
         bool rightNeedReArrange = (childLeftShape == 1 && childRightShape == 2 && child->left != nullptr);
 
@@ -396,7 +408,34 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 
 template <typename K, typename V>
 void CrumpleTree<K, V>::remove(const K &key) {
-    // TODO: Implement this
+    // check if key in tree
+    try {
+        contains(key);
+    } 
+    catch (std::runtime_error) {
+        return;
+    }
+
+    // Search phase
+    Node *current{root};
+    while (current != nullptr) {
+        if (key == current->key)
+        {
+            break;
+        }
+        else if (key < current->key)
+        {
+            current = current->left;
+        }
+        else 
+        {
+            current = current->right;
+        }
+    }
+
+
+    
+
 }
 template <typename K, typename V>
 void CrumpleTree<K, V>::recursiveInOrder(Node *current, std::vector<K> &allKeys) const {

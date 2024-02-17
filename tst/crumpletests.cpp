@@ -322,4 +322,12 @@ TEST_CASE("Tree:OtherInsertionInCludeMirroringOfLeft",
     REQUIRE(tree2.level(22) == 4);
     REQUIRE(tree2.level(28) == 5);
 }
+
+TEST_CASE("Tree:OtherRemove",
+          "[Extra][Remove][Contains][Level]") {
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.remove(3);
+    
+
+}
 } // namespace

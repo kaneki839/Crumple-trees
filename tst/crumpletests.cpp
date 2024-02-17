@@ -258,7 +258,7 @@ TEST_CASE("Tree:WholeInsertionLogic",
     REQUIRE(tree.contains(14));
 }
 
-TEST_CASE("Tree:OtherInsertion",
+TEST_CASE("Tree:OtherInsertionInCludeMirroringOfLeft",
           "[Extra][Insert][Contains][Level]") {
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(22, "day1");
@@ -290,14 +290,36 @@ TEST_CASE("Tree:OtherInsertion",
     REQUIRE(tree2.level(28) == 2);
     REQUIRE(tree2.level(22) == 3);
 
-    tree2.insert(32, "huhh");
+    tree2.insert(33, "huhh");
+    tree2.insert(35, "whatttt");
+    tree2.insert(27, "noo i want...");
+    tree2.insert(25, "SWEEEEEEE");
     REQUIRE(tree2.level(20) == 1);
     REQUIRE(tree2.level(23) == 1);
-    REQUIRE(tree2.level(32) == 1);
+    REQUIRE(tree2.level(27) == 1);
+    REQUIRE(tree2.level(31) == 1);
+    REQUIRE(tree2.level(35) == 1);
     REQUIRE(tree2.level(21) == 2);
-    REQUIRE(tree2.level(31) == 2);
+    REQUIRE(tree2.level(25) == 2);
+    REQUIRE(tree2.level(33) == 2);
     REQUIRE(tree2.level(28) == 3);
     REQUIRE(tree2.level(22) == 4);
 
+    tree2.insert(34, "INT..");
+    tree2.insert(24, "ERNNN...");
+    tree2.insert(26, "and RESEARCH PLZZZZZ");
+    REQUIRE(tree2.level(20) == 1);
+    REQUIRE(tree2.level(24) == 1);
+    REQUIRE(tree2.level(26) == 1);
+    REQUIRE(tree2.level(31) == 1);
+    REQUIRE(tree2.level(34) == 1);
+    REQUIRE(tree2.level(21) == 2);
+    REQUIRE(tree2.level(23) == 2);
+    REQUIRE(tree2.level(27) == 2);
+    REQUIRE(tree2.level(35) == 2);
+    REQUIRE(tree2.level(25) == 3);
+    REQUIRE(tree2.level(33) == 3);
+    REQUIRE(tree2.level(22) == 4);
+    REQUIRE(tree2.level(28) == 5);
 }
 } // namespace

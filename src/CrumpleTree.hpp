@@ -218,11 +218,11 @@ void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild,
             parent -> 17
         */ 
         child->right = prevChild->left;
-        if (prevChild->left != nullptr) // for left subtree
+        if (prevChild->left != nullptr) // for rearrange @left subtree
         {
             prevChild->left->parent = child;  // change the parent for the LC of prev child node
         }
-        if (parent->parent != nullptr) // for right subtree
+        if (parent->parent != nullptr) // for rearrange @right subtree
         {
             parent->parent->right = prevChild;
         }
@@ -230,18 +230,6 @@ void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild,
 
         parent->left = prevChild->right; 
         prevChild->right = parent;
-        
-        prevChild->level++;
-        parent->level--;
-        child->level--;
-        
-        prevChild->parent = parent->parent;
-        child->parent = prevChild;
-        parent->parent = prevChild;
-        if (parent == root)
-        {
-            root = prevChild;
-        }
     }
     // right rising
     else if (rightNeedReArrange)
@@ -253,30 +241,29 @@ void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild,
         */ 
 
         child->left = prevChild->right;
-        if (prevChild->right != nullptr) // for right subtree
+        if (prevChild->right != nullptr) // for rearrange @right subtree
         {
-            prevChild->right->parent = child;  // change the parent for the LC of prev child node
+            prevChild->right->parent = child;  // change the parent for the RC of prev child node
         }
-        // if (parent->parent != nullptr) 
-        // {
-        //     parent->parent->right = prevChild;
-        // }
+        if (parent->parent != nullptr) // vice-vera
+        {
+            parent->parent->left = prevChild;
+        }
         prevChild->right = child;
 
         parent->right = prevChild->left; 
-        prevChild->left = parent;
-        
-        prevChild->level++;
-        parent->level--;
-        child->level--;
-        
-        prevChild->parent = parent->parent;
-        child->parent = prevChild;
-        parent->parent = prevChild;
-        if (parent == root)
-        {
-            root = prevChild;
-        }
+        prevChild->left = parent;        
+    }
+    prevChild->level++;
+    parent->level--;
+    child->level--;
+    
+    prevChild->parent = parent->parent;
+    child->parent = prevChild;
+    parent->parent = prevChild;
+    if (parent == root)
+    {
+        root = prevChild;
     }
 }
 
@@ -387,9 +374,9 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
                         }
                         child->parent = parent->parent;
                         parent->parent = child;
-                        if (parent->left != nullptr)
+                        if (parent->right != nullptr)
                         {
-                            parent->left->parent = parent; // reset the child's parent to the new parent
+                            parent->right->parent = parent; // reset the child's parent to the new parent
                         }
                     }
                 }
@@ -402,7 +389,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
         }
         prevChild = child;
         child = parent;
-        parent = parent->parent; // next parent of cur's parent
+        parent = parent->parent;  // next parent of cur's parent
     }
     treeSize++;
 }

@@ -74,14 +74,14 @@ class CrumpleTree {
     V &find(const K &key);
     const V &find(const K &key) const;
 
+    void calculateShape(Node *node, int &leftShape, int &rightShape);
+    void reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange);
     // Inserts the given key-value pair into
     // the tree and performs the balancing operation(s)
     // if needed as described in lecture.
     // If the key already exists in the tree,
     // you may do as you please (no test cases in
     // the grading script will deal with this situation)
-    void calculateShape(Node *node, int &leftShape, int &rightShape);
-    void reArrange(Node *&parent, Node *&child, Node *&prevChild, bool leftNeedReArrange, bool rightNeedReArrange);
     void insert(const K &key, const V &value);
 
     // Deletes the given key from the tree
@@ -125,6 +125,11 @@ bool CrumpleTree<K, V>::empty() const noexcept {
 
 template <typename K, typename V>
 bool CrumpleTree<K, V>::contains(const K &key) const noexcept {
+    if (empty())
+    {
+        return false;
+    }
+
     Node *current{root};
     while (current != nullptr) {
         if (key == current->key)
@@ -145,6 +150,11 @@ bool CrumpleTree<K, V>::contains(const K &key) const noexcept {
 
 template <typename K, typename V>
 unsigned CrumpleTree<K, V>::level(const K &key) const {
+    if (empty())
+    {
+        throw ElementNotFoundException("key is not in the tree");
+    }
+
     Node *current{root};
     while (current != nullptr) {
         if (key == current->key)
@@ -165,6 +175,11 @@ unsigned CrumpleTree<K, V>::level(const K &key) const {
 
 template <typename K, typename V>
 V &CrumpleTree<K, V>::find(const K &key) {
+    if (empty())
+    {
+        throw ElementNotFoundException("key is not in the tree");
+    }
+
     Node *current{root};
     while (current != nullptr) {
         if (key == current->key)
@@ -185,6 +200,11 @@ V &CrumpleTree<K, V>::find(const K &key) {
 
 template <typename K, typename V>
 const V &CrumpleTree<K, V>::find(const K &key) const {
+    if (empty())
+    {
+        throw ElementNotFoundException("key is not in the tree");
+    }
+
     Node *current{root};
     while (current != nullptr) {
         if (key == current->key)
@@ -319,7 +339,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
     Node *parent{current};  // current is the parent of newly inserted node @ level 1
     Node *child{newNode};
     
-    // case 1
+    // Case 1
     if (child->level == 0)
     {
         child->level++;
@@ -343,20 +363,20 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
         {
             if (!canMoveUpParent)
             {
-                // case 5
+                // Case 5
                 if ((parent->left == child && leftNeedReArrange) || (parent->right == child && rightNeedReArrange))
                 {
                     reArrange(parent, child, prevChild, leftNeedReArrange, rightNeedReArrange);
                 }
                 else 
                 {
-                    // case 3
+                    // Case 3 & 4
                     parent->level--;
                     if (parent->left == child)    // at left 
                     {
                         parent->left = child->right;
                         child->right = parent;
-                        
+
                         if (parent == root) 
                         {
                             root = child;
@@ -376,6 +396,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
                     {
                         parent->right = child->left;
                         child->left = parent;
+
                         if (parent == root) 
                         {
                             root = child;
@@ -395,7 +416,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
             }
             else 
             {
-                // case 2
+                // Case 2
                 parent->level++;
             }
         }
@@ -409,10 +430,8 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 template <typename K, typename V>
 void CrumpleTree<K, V>::remove(const K &key) {
     // check if key in tree
-    try {
-        contains(key);
-    } 
-    catch (std::runtime_error) {
+    if (!contains(key) )
+    {
         return;
     }
 
@@ -433,9 +452,38 @@ void CrumpleTree<K, V>::remove(const K &key) {
         }
     }
 
+    // Rebalance phase
+    Node *parent{current->parent};
+    Node *child{current};
+    while (parent != nullptr) {
+        int parentLeftShape = 0;
+        int parentRightShape = 0;
+        calculateShape(parent, parentLeftShape, parentRightShape);
+        // Case 1A
+        if ((parentLeftShape == 1 && parentRightShape == 1) || (parentLeftShape == 1 && parentRightShape == 2) || (parentLeftShape == 2 && parentRightShape == 1))
+        {
+            if (parent->left == child)
+            {
+                parent->left = child->left;
+            }
+            else 
+            {
+                parent->right = child->right;
+            }
+            delete child;
 
-    
-
+            // Case 1B
+            calculateShape(parent, parentLeftShape, parentRightShape);
+            if (parentLeftShape == 2 && parentRightShape == 2)
+            {
+                parent->level--;
+            }
+            break;
+        }
+        child = parent;
+        parent = parent->parent;
+    }
+    treeSize--;
 }
 template <typename K, typename V>
 void CrumpleTree<K, V>::recursiveInOrder(Node *current, std::vector<K> &allKeys) const {

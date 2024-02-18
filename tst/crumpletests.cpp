@@ -329,6 +329,7 @@ TEST_CASE("Tree:OtherRemove",
     proj4::CrumpleTree<int, std::string> tree1;
     tree1.remove(3);
     
+    // extra test for the required test case
     proj4::CrumpleTree<int, std::string> tree;
     tree.insert(20, "are");
     tree.insert(19, "you");
@@ -348,6 +349,16 @@ TEST_CASE("Tree:OtherRemove",
     REQUIRE(!tree.contains(12));
     REQUIRE(tree.level(20) == 1);
     REQUIRE(tree.level(19) == 2);
+
+    // other test cases
+    proj4::CrumpleTree<int, std::string> anotherTree;
+    anotherTree.insert(20, "are");
+    anotherTree.insert(19, "you");
+    anotherTree.insert(18, "following");
+    anotherTree.insert(12, "from");
+    anotherTree.insert(9, "lecture?");
+    anotherTree.insert(17, "holdonnn");
+    anotherTree.remove(18);
 
 }
 } // namespace

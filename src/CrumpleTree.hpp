@@ -435,7 +435,7 @@ void CrumpleTree<K, V>::remove(const K &key) {
         return;
     }
 
-    // Search phase
+    // Downward phase
     Node *current{root};
     while (current != nullptr) {
         if (key == current->key)
@@ -452,6 +452,39 @@ void CrumpleTree<K, V>::remove(const K &key) {
         }
     }
 
+    // if current is not leaf node, then swap
+    while (current->left != nullptr || current->right != nullptr) {
+        K curKey = current->key;
+        V curVal = current->value;
+        
+        // find successor
+        Node *successor{current->right};
+        Node *predecessor{current->left};
+        if (current->right != nullptr)  // leftmost of right subtree if node had right subtree
+        {
+            while (successor->left != nullptr) {
+                successor = successor->left;
+            }
+            current->key = successor->key;
+            current->value = successor->value;
+            successor->key = curKey;
+            successor->value = curVal;
+            current = successor;
+        }
+        // if node doesn't have right subtree, then find predecessor
+        else if (current->left != nullptr)
+        {
+            while (predecessor->right != nullptr) {
+                predecessor = predecessor->right;
+            }
+            current->key = predecessor->key;
+            current->value = predecessor->value;
+            predecessor->key = curKey;
+            predecessor->value = curVal;
+            current = predecessor;
+        }
+    }
+    
     // Rebalance phase
     Node *parent{current->parent};
     Node *child{current};

@@ -462,6 +462,7 @@ void CrumpleTree<K, V>::remove(const K &key) {
         // Case 1A
         if ((parentLeftShape == 1 && parentRightShape == 1) || (parentLeftShape == 1 && parentRightShape == 2) || (parentLeftShape == 2 && parentRightShape == 1))
         {
+            // both left and right
             if (parent->left == child)
             {
                 parent->left = child->left;
@@ -478,6 +479,23 @@ void CrumpleTree<K, V>::remove(const K &key) {
             {
                 parent->level--;
             }
+            break;
+        }
+
+        // Case 2
+        else if (parentLeftShape == 2 && parentRightShape == 2)
+        {     
+            // both left and right
+            if (parent->left == child)
+            {
+                parent->left = child->left;   // might have parent ptr assgining problem here
+            }
+            else 
+            {
+                parent->right = child->right;
+            }
+            delete child;
+            parent->level--;
             break;
         }
         child = parent;

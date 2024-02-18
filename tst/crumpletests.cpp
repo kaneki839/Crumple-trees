@@ -325,9 +325,29 @@ TEST_CASE("Tree:OtherInsertionInCludeMirroringOfLeft",
 
 TEST_CASE("Tree:OtherRemove",
           "[Extra][Remove][Contains][Level]") {
-    proj4::CrumpleTree<int, std::string> tree;
-    tree.remove(3);
+    // if tree is empty and key not in the tree
+    proj4::CrumpleTree<int, std::string> tree1;
+    tree1.remove(3);
     
+    proj4::CrumpleTree<int, std::string> tree;
+    tree.insert(20, "are");
+    tree.insert(19, "you");
+    tree.insert(18, "following");
+    tree.insert(12, "from");
+    tree.insert(9, "lecture?");
+    REQUIRE(tree.contains(20));
+    REQUIRE(tree.contains(19));
+    REQUIRE(tree.contains(18));
+    REQUIRE(tree.contains(12));
+    REQUIRE(tree.contains(9));
+    tree.remove(9);
+    tree.remove(18);
+    tree.remove(12);
+    REQUIRE(!tree.contains(9));
+    REQUIRE(!tree.contains(18));
+    REQUIRE(!tree.contains(12));
+    REQUIRE(tree.level(20) == 1);
+    REQUIRE(tree.level(19) == 2);
 
 }
 } // namespace

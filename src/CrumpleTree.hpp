@@ -492,8 +492,9 @@ void CrumpleTree<K, V>::remove(const K &key) {
         int parentLeftShape = 0;
         int parentRightShape = 0;
         calculateShape(parent, parentLeftShape, parentRightShape);
+
         // Case 1A
-        if ((parentLeftShape == 1 && parentRightShape == 1) || (parentLeftShape == 1 && parentRightShape == 2) || (parentLeftShape == 2 && parentRightShape == 1))
+        if (((parentLeftShape == 1 && parentRightShape == 1) || (parentLeftShape == 1 && parentRightShape == 2) || (parentLeftShape == 2 && parentRightShape == 1)) && child->key == key)
         {
             // both left and right
             if (parent->left == child)
@@ -512,11 +513,11 @@ void CrumpleTree<K, V>::remove(const K &key) {
             {
                 parent->level--;
             }
-            break;
+            // break;
         }
-
+        
         // Case 2
-        else if (parentLeftShape == 2 && parentRightShape == 2)
+        else if ((parentLeftShape == 2 && parentRightShape == 2) && child->key == key)
         {     
             // both left and right
             if (parent->left == child)
@@ -529,13 +530,68 @@ void CrumpleTree<K, V>::remove(const K &key) {
             }
             delete child;
             parent->level--;
-            break;
         }
+
+        else if ((parentLeftShape == 3 && parentRightShape == 1)) // left falling
+        {
+            // Case 3 
+            int leftShape = 0;
+            int rightShape = 0;
+            calculateShape(parent->right, leftShape, rightShape);
+            if (leftShape == 1 && rightShape == 1)
+            {
+                Node *rightChild = parent->right;
+
+                parent->right = rightChild->left;
+                rightChild->left->parent = parent;  // changing the parent of old LC
+                rightChild->left = parent;
+                
+                parent->level--;
+                rightChild->level++;
+                
+                rightChild->parent = parent->parent;
+                parent->parent = rightChild;
+
+                // reassign left ptr for parent that originally point to old node
+                if (parent->parent != nullptr)
+                {
+                    rightChild->parent->left = rightChild;
+                }
+            }
+        }
+        else if (parentLeftShape == 1 && parentRightShape == 3) // right falling
+        {
+            int leftShape = 0;
+            int rightShape = 0;
+            calculateShape(parent->right, leftShape, rightShape);
+            if (leftShape == 1 && rightShape == 1)
+            {
+                Node *leftChild = parent->left;
+                
+                parent->left = leftChild->right;
+                leftChild->right->parent = parent;  // changing the parent of old RC
+                leftChild->right = parent;
+                
+                parent->level--;
+                leftChild->level++;
+                
+                leftChild->parent = parent->parent;
+                parent->parent = leftChild;
+
+                // reassign right ptr for parent that originally point to old node
+                if (parent->parent != nullptr)
+                {
+                    leftChild->parent->right = leftChild;
+                }
+            }
+        }
+
         child = parent;
         parent = parent->parent;
     }
     treeSize--;
 }
+
 template <typename K, typename V>
 void CrumpleTree<K, V>::recursiveInOrder(Node *current, std::vector<K> &allKeys) const {
     if (current == nullptr)

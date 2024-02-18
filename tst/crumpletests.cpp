@@ -350,7 +350,7 @@ TEST_CASE("Tree:OtherRemove",
     REQUIRE(tree.level(20) == 1);
     REQUIRE(tree.level(19) == 2);
 
-    // other test cases
+    // other test cases (including case 1 and 2)
     proj4::CrumpleTree<int, std::string> anotherTree;
     anotherTree.insert(20, "are");
     anotherTree.insert(19, "you");
@@ -359,6 +359,41 @@ TEST_CASE("Tree:OtherRemove",
     anotherTree.insert(9, "lecture?");
     anotherTree.insert(17, "holdonnn");
     anotherTree.remove(18);
+    REQUIRE(anotherTree.level(20) == 1);
+    REQUIRE(anotherTree.level(17) == 1);
+    REQUIRE(anotherTree.level(9) == 1);
+    REQUIRE(anotherTree.level(12) == 2);
+    REQUIRE(anotherTree.level(19) == 3);
 
+
+    proj4::CrumpleTree<int, std::string> treetree;
+    treetree.insert(20, "c");
+    treetree.insert(21, "r");
+    treetree.insert(22, "u");
+    treetree.insert(28, "m");
+    treetree.insert(31, "p");
+    treetree.insert(23, "le?");
+    treetree.insert(33, "emmm");
+    treetree.insert(35, "whatttt");
+    treetree.insert(27, "noo i want...");
+    treetree.insert(25, "SWEEEEEEE");
+    treetree.insert(34, "INT..");
+    treetree.insert(24, "ERNNN...");
+    treetree.insert(26, "hjb");
+
+    // Case 3
+    treetree.remove(21);
+    REQUIRE(treetree.level(20) == 1);
+    REQUIRE(treetree.level(24) == 1);
+    REQUIRE(treetree.level(26) == 1);
+    REQUIRE(treetree.level(31) == 1);
+    REQUIRE(treetree.level(34) == 1);
+    REQUIRE(treetree.level(23) == 2);
+    REQUIRE(treetree.level(27) == 2);
+    REQUIRE(treetree.level(35) == 2);
+    REQUIRE(treetree.level(22) == 3);
+    REQUIRE(treetree.level(33) == 3);
+    REQUIRE(treetree.level(25) == 4);
+    REQUIRE(treetree.level(28) == 5);
 }
 } // namespace

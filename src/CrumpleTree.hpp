@@ -266,7 +266,14 @@ void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild,
         }
         if (parent->parent != nullptr) // for rearrange @right subtree
         {
-            parent->parent->right = prevChild;
+            if (parent->parent->left == parent)
+            {
+                parent->parent->left = prevChild;
+            }
+            else 
+            {
+                parent->parent->right = prevChild;
+            }
         }
         prevChild->left = child;
 
@@ -289,7 +296,14 @@ void CrumpleTree<K, V>::reArrange(Node *&parent, Node *&child, Node *&prevChild,
         }
         if (parent->parent != nullptr) // vice-vera
         {
-            parent->parent->left = prevChild;
+            if (parent->parent->left == parent)
+            {
+                parent->parent->left = prevChild;
+            }
+            else 
+            {
+                parent->parent->right = prevChild;
+            }
         }
         prevChild->right = child;
 
@@ -472,7 +486,14 @@ void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent) {
         // reassign left ptr for parent that originally point to old node
         if (parent->parent != nullptr)
         {
-            rightChild->parent->left = rightChild;
+            if (parent->parent->left == parent)
+            {
+                rightChild->parent->left = rightChild;
+            }
+            else 
+            {
+                rightChild->parent->right = rightChild;
+            }
         }
         parent->parent = rightChild;
         if (parent == root)
@@ -552,7 +573,14 @@ void CrumpleTree<K, V>::rotateInRightTree(Node *&parent) {
         // reassign right ptr for parent that originally point to old node
         if (parent->parent != nullptr)
         {
-            leftChild->parent->right = leftChild;
+            if (parent->parent->left == parent)
+            {
+                leftChild->parent->left = leftChild;
+            }
+            else 
+            {
+                leftChild->parent->right = leftChild;
+            }
         }
         parent->parent = leftChild;
         if (parent == root)

@@ -672,4 +672,35 @@ TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
     REQUIRE(tree.level(262143) == 19);
 }
 
+TEST_CASE("Tree:DeleteEdgeCase",
+          "[Additional][Delete][Contains]") {
+    proj4::CrumpleTree<int, int> tree;
+    tree.insert(43, 0);
+    tree.insert(65, 0);
+    tree.insert(34, 0);
+    tree.insert(6, 0);
+    tree.insert(3, 0);
+    tree.insert(5, 0);
+    tree.insert(76, 0);
+    tree.insert(45, 0);
+    tree.insert(10, 0);
+    tree.insert(83, 0);
+    tree.insert(78, 0);
+    tree.insert(44, 0);
+    tree.insert(99, 0);
+    tree.remove(3);
+    tree.remove(45);
+    tree.remove(78);
+    REQUIRE(tree.level(5) == 1);
+    REQUIRE(tree.level(10) == 1);
+    REQUIRE(tree.level(44) == 1);
+    REQUIRE(tree.level(76) == 1);
+    REQUIRE(tree.level(99) == 1);
+    REQUIRE(tree.level(34) == 2);
+    REQUIRE(tree.level(65) == 2);
+    REQUIRE(tree.level(6) == 3);
+    REQUIRE(tree.level(83) == 3);
+    REQUIRE(tree.level(43) == 5);
+}
+
 } // namespace

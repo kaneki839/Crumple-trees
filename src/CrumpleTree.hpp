@@ -52,6 +52,7 @@ class CrumpleTree {
 
     // The destructor is required.
     ~CrumpleTree();
+    void deleteTree(Node *node);
 
     // size() returns the number of distinct keys in the tree.
     [[nodiscard]] size_t size() const noexcept;
@@ -84,8 +85,8 @@ class CrumpleTree {
     // the grading script will deal with this situation)
     void insert(const K &key, const V &value);
 
-    void rotateInLeftTree(Node *&parent, int parentLeftShape,int parentRightShape);
-    void rotateInRightTree(Node *&parent, int parentLeftShape,int parentRightShape);
+    void rotateInLeftTree(Node *&parent);
+    void rotateInRightTree(Node *&parent);
     // Deletes the given key from the tree
     // and performs the balancing operation(s) if needed.
     // If the key does not exist in the tree,
@@ -111,7 +112,17 @@ CrumpleTree<K, V>::CrumpleTree()
 
 template <typename K, typename V>
 CrumpleTree<K, V>::~CrumpleTree() {
-    // TODO: Implement this
+    deleteTree(root);
+}
+
+template <typename K, typename V>
+void CrumpleTree<K, V>::deleteTree(Node *node) {
+    if (node) 
+    {
+        deleteTree(node->left);
+        deleteTree(node->right);
+        delete node;
+    }
 }
 
 template <typename K, typename V>
@@ -430,7 +441,7 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 }
 
 template <typename K, typename V>
-void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent, int parentLeftShape,int parentRightShape) {
+void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent) {
     int leftShape = 0;
     int rightShape = 0;
     calculateShape(parent->right, leftShape, rightShape);
@@ -439,6 +450,13 @@ void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent, int parentLeftShape,int 
     if ((leftShape == 1 && rightShape == 1) || (leftShape == 2 && rightShape == 1))
     {
         Node *rightChild = parent->right;
+        
+        // Case 4B
+        if (leftShape == 2 && rightShape == 1 && rightChild->left == nullptr)
+        {
+            parent->level--;
+            rightChild->level--;
+        }
 
         parent->right = rightChild->left;
         if (rightChild->left != nullptr)
@@ -451,35 +469,75 @@ void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent, int parentLeftShape,int 
         rightChild->level++;
         
         rightChild->parent = parent->parent;
-        parent->parent = rightChild;
-
         // reassign left ptr for parent that originally point to old node
         if (parent->parent != nullptr)
         {
             rightChild->parent->left = rightChild;
         }
-
-        // Case 4B
-        calculateShape(parent, parentLeftShape, parentRightShape);
-        if (parentLeftShape == 2 && parentRightShape == 2)
+        parent->parent = rightChild;
+        if (parent == root)
         {
-            parent->level--;
-            rightChild->level--;
+            root = rightChild;
         }
     }
+
+    // Case 5
+    else if (leftShape == 1 && rightShape == 2)
+    {
+        Node *child = parent->right;
+        Node *mid = parent->right->left;
+        
+        child->left = mid->right;
+        if (mid->right != nullptr)
+        {
+            mid->right->parent = child;
+        }
+        mid->right = child;
+
+        parent->right = mid->left;
+        if (mid->left != nullptr)
+        {
+            mid->left->parent = parent;
+        }
+        mid->left = parent;
+
+        int oldParentLevel = parent->level;
+        parent->level = mid->level;
+        child->level = mid->level;
+        mid->level = oldParentLevel;
+        
+        if (parent == root)
+        {
+            root = mid;
+        }
+    }
+    // Case 6
+    else if (leftShape == 2 && rightShape == 2)
+    {
+        parent->level--;
+        parent->right->level--;
+    }
+
 }
 
 template <typename K, typename V>
-void CrumpleTree<K, V>::rotateInRightTree(Node *&parent, int parentLeftShape,int parentRightShape) {
+void CrumpleTree<K, V>::rotateInRightTree(Node *&parent) {
     int leftShape = 0;
     int rightShape = 0;
     calculateShape(parent->left, leftShape, rightShape);
                             
     // Case 3 and 4A
-    if ((leftShape == 1 && rightShape == 1) || (leftShape == 2 && rightShape == 1))
+    if ((leftShape == 1 && rightShape == 1) || (rightShape == 2 && leftShape == 1))
     {
         Node *leftChild = parent->left;
         
+        // Case 4B
+        if (rightShape == 2 && leftShape == 1 && leftChild->right == nullptr)
+        {
+            parent->level--;
+            leftChild->level--;
+        }
+
         parent->left = leftChild->right;
         if (leftChild->right != nullptr)
         {
@@ -491,21 +549,53 @@ void CrumpleTree<K, V>::rotateInRightTree(Node *&parent, int parentLeftShape,int
         leftChild->level++;
         
         leftChild->parent = parent->parent;
-        parent->parent = leftChild;
-
         // reassign right ptr for parent that originally point to old node
         if (parent->parent != nullptr)
         {
             leftChild->parent->right = leftChild;
         }
-
-        // Case 4B
-        calculateShape(parent, parentLeftShape, parentRightShape);
-        if (parentLeftShape == 2 && parentRightShape == 2)
+        parent->parent = leftChild;
+        if (parent == root)
         {
-            parent->level--;
-            leftChild->level--;
+            root = leftChild;
         }
+    }
+
+    else if (leftShape == 2 && rightShape == 1)
+    {
+        Node *child = parent->left;
+        Node *mid = parent->left->right;
+        
+        child->right = mid->left;
+        if (mid->left != nullptr)
+        {
+            mid->left->parent = child;
+        }
+        mid->left = child;
+
+        parent->left = mid->right;
+        if (mid->right != nullptr)
+        {
+            mid->right->parent = parent;
+        }
+        mid->right = parent;
+
+        int oldParentLevel = parent->level;
+        parent->level = mid->level;
+        child->level = mid->level;
+        mid->level = oldParentLevel;
+        
+        if (parent == root)
+        {
+            root = mid;
+        }
+    }
+
+    // Case 6
+    else if (leftShape == 2 && rightShape == 2)
+    {
+        parent->level--;
+        parent->left->level--;
     }
 }
 
@@ -595,13 +685,13 @@ void CrumpleTree<K, V>::remove(const K &key) {
             {
                 parent->level--;
             }
-            else if (parentLeftShape == 3 && parentRightShape == 1)
+            else if (parentLeftShape == 3 && parentRightShape == 1) // might have case 3, 4A, or 4B
             {
-                rotateInLeftTree(parent, parentLeftShape, parentRightShape);
+                rotateInLeftTree(parent);
             }
             else if (parentLeftShape == 1 && parentRightShape == 3)
             {
-                rotateInRightTree(parent, parentLeftShape, parentRightShape);
+                rotateInRightTree(parent);
             }
         }
         
@@ -623,11 +713,15 @@ void CrumpleTree<K, V>::remove(const K &key) {
 
         else if ((parentLeftShape == 3 && parentRightShape == 1)) // Case 3 -> left falling
         {
-            rotateInLeftTree(parent, parentLeftShape, parentRightShape);
+            rotateInLeftTree(parent);
         }
         else if (parentLeftShape == 1 && parentRightShape == 3) // Case 3 -> right falling
         {
-            rotateInRightTree(parent, parentLeftShape, parentRightShape);
+            rotateInRightTree(parent);
+        }
+        else if ((parentLeftShape == 3 && parentRightShape == 2) || (parentLeftShape == 2 && parentRightShape == 3))
+        {
+            parent->level--;
         }
 
         child = parent;

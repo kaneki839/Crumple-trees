@@ -84,6 +84,8 @@ class CrumpleTree {
     // the grading script will deal with this situation)
     void insert(const K &key, const V &value);
 
+    void rotateInLeftTree(Node *&parent, int parentLeftShape,int parentRightShape);
+    void rotateInRightTree(Node *&parent, int parentLeftShape,int parentRightShape);
     // Deletes the given key from the tree
     // and performs the balancing operation(s) if needed.
     // If the key does not exist in the tree,
@@ -428,6 +430,86 @@ void CrumpleTree<K, V>::insert(const K &key, const V &value) {
 }
 
 template <typename K, typename V>
+void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent, int parentLeftShape,int parentRightShape) {
+    int leftShape = 0;
+    int rightShape = 0;
+    calculateShape(parent->right, leftShape, rightShape);
+
+    // Case 3 and 4A (Same concept)
+    if ((leftShape == 1 && rightShape == 1) || (leftShape == 2 && rightShape == 1))
+    {
+        Node *rightChild = parent->right;
+
+        parent->right = rightChild->left;
+        if (rightChild->left != nullptr)
+        {
+            rightChild->left->parent = parent;  // changing the parent of old LC
+        }
+        rightChild->left = parent;
+        
+        parent->level--;
+        rightChild->level++;
+        
+        rightChild->parent = parent->parent;
+        parent->parent = rightChild;
+
+        // reassign left ptr for parent that originally point to old node
+        if (parent->parent != nullptr)
+        {
+            rightChild->parent->left = rightChild;
+        }
+
+        // Case 4B
+        calculateShape(parent, parentLeftShape, parentRightShape);
+        if (parentLeftShape == 2 && parentRightShape == 2)
+        {
+            parent->level--;
+            rightChild->level--;
+        }
+    }
+}
+
+template <typename K, typename V>
+void CrumpleTree<K, V>::rotateInRightTree(Node *&parent, int parentLeftShape,int parentRightShape) {
+    int leftShape = 0;
+    int rightShape = 0;
+    calculateShape(parent->left, leftShape, rightShape);
+                            
+    // Case 3 and 4A
+    if ((leftShape == 1 && rightShape == 1) || (leftShape == 2 && rightShape == 1))
+    {
+        Node *leftChild = parent->left;
+        
+        parent->left = leftChild->right;
+        if (leftChild->right != nullptr)
+        {
+            leftChild->right->parent = parent;  // changing the parent of old RC
+        }
+        leftChild->right = parent;
+        
+        parent->level--;
+        leftChild->level++;
+        
+        leftChild->parent = parent->parent;
+        parent->parent = leftChild;
+
+        // reassign right ptr for parent that originally point to old node
+        if (parent->parent != nullptr)
+        {
+            leftChild->parent->right = leftChild;
+        }
+
+        // Case 4B
+        calculateShape(parent, parentLeftShape, parentRightShape);
+        if (parentLeftShape == 2 && parentRightShape == 2)
+        {
+            parent->level--;
+            leftChild->level--;
+        }
+    }
+}
+
+template <typename K, typename V>
 void CrumpleTree<K, V>::remove(const K &key) {
     // check if key in tree
     if (!contains(key) )
@@ -513,7 +595,14 @@ void CrumpleTree<K, V>::remove(const K &key) {
             {
                 parent->level--;
             }
-            // break;
+            else if (parentLeftShape == 3 && parentRightShape == 1)
+            {
+                rotateInLeftTree(parent, parentLeftShape, parentRightShape);
+            }
+            else if (parentLeftShape == 1 && parentRightShape == 3)
+            {
+                rotateInRightTree(parent, parentLeftShape, parentRightShape);
+            }
         }
         
         // Case 2
@@ -532,58 +621,13 @@ void CrumpleTree<K, V>::remove(const K &key) {
             parent->level--;
         }
 
-        else if ((parentLeftShape == 3 && parentRightShape == 1)) // left falling
+        else if ((parentLeftShape == 3 && parentRightShape == 1)) // Case 3 -> left falling
         {
-            // Case 3 
-            int leftShape = 0;
-            int rightShape = 0;
-            calculateShape(parent->right, leftShape, rightShape);
-            if (leftShape == 1 && rightShape == 1)
-            {
-                Node *rightChild = parent->right;
-
-                parent->right = rightChild->left;
-                rightChild->left->parent = parent;  // changing the parent of old LC
-                rightChild->left = parent;
-                
-                parent->level--;
-                rightChild->level++;
-                
-                rightChild->parent = parent->parent;
-                parent->parent = rightChild;
-
-                // reassign left ptr for parent that originally point to old node
-                if (parent->parent != nullptr)
-                {
-                    rightChild->parent->left = rightChild;
-                }
-            }
+            rotateInLeftTree(parent, parentLeftShape, parentRightShape);
         }
-        else if (parentLeftShape == 1 && parentRightShape == 3) // right falling
+        else if (parentLeftShape == 1 && parentRightShape == 3) // Case 3 -> right falling
         {
-            int leftShape = 0;
-            int rightShape = 0;
-            calculateShape(parent->right, leftShape, rightShape);
-            if (leftShape == 1 && rightShape == 1)
-            {
-                Node *leftChild = parent->left;
-                
-                parent->left = leftChild->right;
-                leftChild->right->parent = parent;  // changing the parent of old RC
-                leftChild->right = parent;
-                
-                parent->level--;
-                leftChild->level++;
-                
-                leftChild->parent = parent->parent;
-                parent->parent = leftChild;
-
-                // reassign right ptr for parent that originally point to old node
-                if (parent->parent != nullptr)
-                {
-                    leftChild->parent->right = leftChild;
-                }
-            }
+            rotateInRightTree(parent, parentLeftShape, parentRightShape);
         }
 
         child = parent;

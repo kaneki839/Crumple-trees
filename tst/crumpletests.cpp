@@ -395,5 +395,19 @@ TEST_CASE("Tree:OtherRemove",
     REQUIRE(treetree.level(33) == 3);
     REQUIRE(treetree.level(25) == 4);
     REQUIRE(treetree.level(28) == 5);
+
+    // Case 4A and 4B
+    treetree.remove(20);
+    REQUIRE(treetree.level(22) == 1);
+    REQUIRE(treetree.level(24) == 1);
+    REQUIRE(treetree.level(26) == 1);
+    REQUIRE(treetree.level(31) == 1);
+    REQUIRE(treetree.level(34) == 1);
+    REQUIRE(treetree.level(23) == 2);
+    REQUIRE(treetree.level(27) == 2);
+    REQUIRE(treetree.level(35) == 2);
+    REQUIRE(treetree.level(33) == 3);
+    REQUIRE(treetree.level(25) == 4);
+    REQUIRE(treetree.level(28) == 5);
 }
 } // namespace

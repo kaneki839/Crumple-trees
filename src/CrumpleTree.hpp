@@ -531,6 +531,10 @@ void CrumpleTree<K, V>::rotateInLeftTree(Node *&parent) {
         {
             root = mid;
         }
+        else 
+        {
+            parent->parent->right = mid;
+        }
     }
     // Case 6
     else if (leftShape == 2 && rightShape == 2)
@@ -616,6 +620,10 @@ void CrumpleTree<K, V>::rotateInRightTree(Node *&parent) {
         if (parent == root)
         {
             root = mid;
+        }
+        else 
+        {
+            parent->parent->left = mid;
         }
     }
 

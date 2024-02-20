@@ -674,33 +674,77 @@ TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
 
 TEST_CASE("Tree:DeleteEdgeCase",
           "[Additional][Delete][Contains]") {
-    proj4::CrumpleTree<int, int> tree;
-    tree.insert(43, 0);
-    tree.insert(65, 0);
-    tree.insert(34, 0);
-    tree.insert(6, 0);
-    tree.insert(3, 0);
-    tree.insert(5, 0);
-    tree.insert(76, 0);
-    tree.insert(45, 0);
-    tree.insert(10, 0);
-    tree.insert(83, 0);
-    tree.insert(78, 0);
-    tree.insert(44, 0);
-    tree.insert(99, 0);
-    tree.remove(3);
-    tree.remove(45);
-    tree.remove(78);
-    REQUIRE(tree.level(5) == 1);
-    REQUIRE(tree.level(10) == 1);
-    REQUIRE(tree.level(44) == 1);
-    REQUIRE(tree.level(76) == 1);
-    REQUIRE(tree.level(99) == 1);
-    REQUIRE(tree.level(34) == 2);
-    REQUIRE(tree.level(65) == 2);
-    REQUIRE(tree.level(6) == 3);
-    REQUIRE(tree.level(83) == 3);
-    REQUIRE(tree.level(43) == 5);
+      proj4::CrumpleTree<int, int> tree;
+      tree.insert(43, 0);
+      tree.insert(65, 0);
+      tree.insert(34, 0);
+      tree.insert(6, 0);
+      tree.insert(3, 0);
+      tree.insert(5, 0);
+      tree.insert(76, 0);
+      tree.insert(45, 0);
+      tree.insert(10, 0);
+      tree.insert(83, 0);
+      tree.insert(78, 0);
+      tree.insert(44, 0);
+      tree.insert(99, 0);
+      tree.remove(3);
+      tree.remove(45);
+      tree.remove(78);
+      REQUIRE(tree.level(5) == 1);
+      REQUIRE(tree.level(10) == 1);
+      REQUIRE(tree.level(44) == 1);
+      REQUIRE(tree.level(76) == 1);
+      REQUIRE(tree.level(99) == 1);
+      REQUIRE(tree.level(34) == 2);
+      REQUIRE(tree.level(65) == 2);
+      REQUIRE(tree.level(6) == 3);
+      REQUIRE(tree.level(83) == 3);
+      REQUIRE(tree.level(43) == 5);
+}
+
+TEST_CASE("Tree:moreInsertandRemove:",
+         "[Extra][Remove][Contains][Level]") {
+   proj4::CrumpleTree<int, int> tree;
+   tree.insert(10, 1);
+   tree.insert(5, 43); 
+   tree.insert(15, 41);    
+   tree.insert(2, 4);       
+   tree.insert(20, 132);    
+   tree.insert(11, 99);
+   tree.insert(3, 99); 
+   tree.insert(6, 99); 
+   tree.insert(7, 99); 
+   tree.insert(25, 99); 
+   tree.insert(67, 99); 
+   tree.insert(34, 99); 
+   tree.insert(56, 99); 
+   tree.insert(72, 99); 
+   tree.insert(58, 99); 
+
+   REQUIRE(tree.find(7) == 99);
+   REQUIRE(tree.size() == 15);
+
+   tree.remove(2);
+   tree.remove(56); 
+   REQUIRE(tree.level(58) == 3);
+   
+   tree.remove(6);
+   REQUIRE(tree.level(25) == 4);
+   REQUIRE(tree.level(10) == 5);
+   REQUIRE(tree.level(5) == 3);
+   REQUIRE(tree.level(3) == 1);
+   REQUIRE(tree.level(7) == 1);
+   
+   tree.remove(34);
+   REQUIRE(tree.level(67) == 2);
+   REQUIRE(tree.level(58) == 1);
+
+   tree.remove(25);
+   REQUIRE(tree.level(58) == 4);
+
+   tree.remove(20);
+   REQUIRE(!tree.contains(20));
 }
 
 } // namespace

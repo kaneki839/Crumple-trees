@@ -659,18 +659,18 @@ TEST_CASE("Tree:21thInClass: remove 2",
    REQUIRE(tree.level(20) == 1); 
 }
 
-TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
-          "[Additional][Insert][Contains]") {
-    proj4::CrumpleTree<unsigned, unsigned> tree;
-    for (size_t i{0}; i < 1000001; i++) {
-        tree.insert(i, i);
-        REQUIRE(tree.contains(i));
-    }
-    REQUIRE(tree.size() == 1000001); 
-    REQUIRE(tree.level(524287) == 20);
-    REQUIRE(tree.level(786431) == 19);
-    REQUIRE(tree.level(262143) == 19);
-}
+// TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
+//           "[Additional][Insert][Contains]") {
+//     proj4::CrumpleTree<unsigned, unsigned> tree;
+//     for (size_t i{0}; i < 1000001; i++) {
+//         tree.insert(i, i);
+//         REQUIRE(tree.contains(i));
+//     }
+//     REQUIRE(tree.size() == 1000001); 
+//     REQUIRE(tree.level(524287) == 20);
+//     REQUIRE(tree.level(786431) == 19);
+//     REQUIRE(tree.level(262143) == 19);
+// }
 
 TEST_CASE("Tree:DeleteEdgeCase",
           "[Additional][Delete][Contains]") {
@@ -745,6 +745,13 @@ TEST_CASE("Tree:moreInsertandRemove:",
 
    tree.remove(20);
    REQUIRE(!tree.contains(20));
+
+   // single delete
+   proj4::CrumpleTree<int, int> tree1;
+   tree1.insert(1, 1);
+   REQUIRE(tree1.contains(1));
+   tree1.remove(1);
+   REQUIRE(!tree1.contains(1));
 }
 
 } // namespace

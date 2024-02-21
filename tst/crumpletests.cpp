@@ -659,18 +659,18 @@ TEST_CASE("Tree:21thInClass: remove 2",
    REQUIRE(tree.level(20) == 1); 
 }
 
-// TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
-//           "[Additional][Insert][Contains]") {
-//     proj4::CrumpleTree<unsigned, unsigned> tree;
-//     for (size_t i{0}; i < 1000001; i++) {
-//         tree.insert(i, i);
-//         REQUIRE(tree.contains(i));
-//     }
-//     REQUIRE(tree.size() == 1000001); 
-//     REQUIRE(tree.level(524287) == 20);
-//     REQUIRE(tree.level(786431) == 19);
-//     REQUIRE(tree.level(262143) == 19);
-// }
+TEST_CASE("Tree:1000001Elements:ExpectInsertedCorrectly",
+          "[Additional][Insert][Contains]") {
+    proj4::CrumpleTree<unsigned, unsigned> tree;
+    for (size_t i{0}; i < 1000001; i++) {
+        tree.insert(i, i);
+        REQUIRE(tree.contains(i));
+    }
+    REQUIRE(tree.size() == 1000001); 
+    REQUIRE(tree.level(524287) == 20);
+    REQUIRE(tree.level(786431) == 19);
+    REQUIRE(tree.level(262143) == 19);
+}
 
 TEST_CASE("Tree:DeleteEdgeCase",
           "[Additional][Delete][Contains]") {
@@ -752,6 +752,39 @@ TEST_CASE("Tree:moreInsertandRemove:",
    REQUIRE(tree1.contains(1));
    tree1.remove(1);
    REQUIRE(!tree1.contains(1));
+
+   // random insert/delete
+   proj4::CrumpleTree<int, int> tree2;
+   tree2.insert(20, 0);
+   tree2.insert(13, 0);
+   tree2.insert(3, 0);
+   tree2.insert(4, 0);
+   tree2.insert(2, 0);
+   tree2.insert(1, 0);
+   tree2.insert(9, 0);
+   tree2.insert(490, 0);
+   tree2.insert(38, 0);
+   tree2.insert(4900, 0);
+   REQUIRE(tree2.level(1) == 1);
+   REQUIRE(tree2.level(9) == 1);
+   REQUIRE(tree2.level(20) == 1);
+   REQUIRE(tree2.level(4900) == 1);
+   REQUIRE(tree2.level(2) == 2);
+   REQUIRE(tree2.level(4) == 2);
+   REQUIRE(tree2.level(490) == 2);
+   REQUIRE(tree2.level(3) == 3);
+   REQUIRE(tree2.level(38) == 3);
+   REQUIRE(tree2.level(13) == 4);
+   tree2.remove(38);
+   tree2.remove(490);
+   tree2.remove(3);
+   tree2.remove(4);
+   REQUIRE(tree2.level(1) == 1);
+   REQUIRE(tree2.level(9) == 1);
+   REQUIRE(tree2.level(20) == 1);
+   REQUIRE(tree2.level(2) == 2);
+   REQUIRE(tree2.level(4900) == 2);
+   REQUIRE(tree2.level(13) == 4);
 }
 
 } // namespace
